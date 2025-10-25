@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earning Files Downloader</title>
+  <script src="https://telegram.org/js/telegram-web-app.js?v=1.0.1"></script>
+  
+  <!-- RichAds SDK with Cache-Busting and Error Handling -->
+  <script src="https://richads.com/sdk.js?v=1.0.1" data-publisher="934236" async onerror="console.error('RichAds SDK failed to load - Contact support@richads.com with pubId 934236'); window.Telegram?.WebApp?.showAlert?.('RichAds SDK failed - Contact support');"></script>
+  
+  <!-- Telegram Ads Controller -->
+  <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js?v=1.0.1"></script>
+  <script>
+    // Initialize TelegramAdsController with robust error handling
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Initializing TelegramAdsController at', new Date().toISOString());
+      if (window.TelegramAdsController) {
+        window.TelegramAdsController.initialize({
+          pubId: "934236", // REPLACE with your verified pubId from RichAds dashboard
+          appId: "4157",   // REPLACE with your verified appId from RichAds dashboard
+        }).then(() => {
+          console.log('TelegramAdsController initialized successfully with pubId: 934236, appId: 4157');
+        }).catch(err => {
+          console.error('TelegramAdsController initialization failed:', err);
+          window.Telegram?.WebApp?.showAlert?.('Ads initialization failed - Verify pubId/appId in RichAds dashboard');
+        });
+      } else {
+        console.error('TelegramAdsController not available - Check tg-ob.js loading');
+        window.Telegram?.WebApp?.showAlert?.('Ads setup incomplete - Check tg-ob.js');
+      }
+      console.log('richads_show available:', !!window.richads_show);
+      console.log('Telegram WebApp available:', !!window.Telegram?.WebApp);
+    });
+  </script>
+</head>
+<body>
+  <div style="font-family: Arial, sans-serif; margin: 0; padding: 10px; background: linear-gradient(135deg, #f5f5f5, #e0e0e0); color: #333; overflow-x: hidden;">
+    <div style="background: linear-gradient(90deg, #0088cc, #ff4444); color: white; text-align: center; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 10px; left: 10px; width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%;"></div>
+      <h1 style="margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">Earning Files Downloader</h1>
+      <p style="margin: 5px 0 0; font-size: 14px; opacity: 0.9;">Watch Ads, Earn & Download Files!</p>
+    </div>
+
+    <div style="max-width: 400px; margin: 20px auto;">
+      <div style="display: flex; justify-content: space-around; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px;">
+        <div style="font-weight: bold; color: #4CAF50; text-align: center; flex: 1; padding: 5px;">
+          <div id="adsProgress" style="width: 50px; height: 50px; background: conic-gradient(#4CAF50 0%, #ddd 0%); border-radius: 50%; position: relative; margin: 0 auto 5px;">
+            <div id="adsLeft" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; white-space: nowrap;">Ads Left: 4</div>
+          </div>
+        </div>
+        <div style="font-weight: bold; color: #4CAF50; text-align: center; flex: 1; padding: 5px;">
+          <div id="coinsProgress" style="width: 50px; height: 50px; background: conic-gradient(#4CAF50 0%, #ddd 0%); border-radius: 50%; position: relative; margin: 0 auto 5px;">
+            <div id="coinsDisplay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; white-space: nowrap;">Coins Earned: 0 (≈ $0.00)</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #fff; padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center;">
+        <input id="tonAddressInput" type="text" placeholder="Enter your TON Address" style="width: 90%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px;">
+        <button id="payoutBtn" disabled style="background: linear-gradient(90deg, #9C27B0, #E040FB); color: white; border: none; padding: 12px 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(156,39,176,0.3); cursor: pointer; margin-top: 5px;">Payout to TON Address</button>
+        <p style="font-size: 12px; color: #666;">Minimum withdrawal: $0.01</p>
+        <p id="withdrawalStatus" style="font-size: 12px; color: #ff8800;"></p>
+      </div>
+
+      <div style="text-align: center;">
+        <h2 style="color: #0088cc; margin-bottom: 15px; font-size: 20px; text-transform: uppercase;">Available Files</h2>
+        <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); display: flex; align-items: center; margin-bottom: 20px;">
+          <div style="width: 90px; height: 90px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 15px; margin-right: 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">📥</div>
+          <div style="flex: 1;">
+            <h3 style="margin: 0; color: #333; font-size: 20px; font-weight: 600;">Top Earning Telegram Mini App Image</h3>
+            <p style="margin: 8px 0; color: #666; font-size: 14px;">Unlock by Watching 4 Ads</p>
+            <button id="watchAdsBtn" style="background: linear-gradient(90deg, #ff4444, #ff8c00); color: white; border: none; padding: 12px 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(255,68,68,0.3); cursor: pointer; margin-top: 5px;">Watch Ads</button>
+            <button id="downloadBtn" disabled style="background: linear-gradient(90deg, #4CAF50, #00e676); color: white; border: none; padding: 12px 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(76,175,80,0.3); cursor: not-allowed; opacity: 0.6; margin-top: 5px;">Download & Earn $0.001</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+      <button id="profileBtn" style="background: none; border: none; color: #0088cc; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+        <span style="font-size: 12px;">Profile</span>
+        <div id="profileName">Guest</div>
+      </button>
+      <button id="adsBtn" style="background: none; border: none; color: #0088cc; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+        <span style="font-size: 12px;">Ads</span>
+      </button>
+      <button id="leaderboardBtn" style="background: none; border: none; color: #0088cc; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+        <span style="font-size: 12px;">Leaderboard</span>
+      </button>
+      <button id="walletBtn" style="background: none; border: none; color: #0088cc; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+        <span style="font-size: 12px;">Wallet</span>
+      </button>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Telegram Web App initialization
+        const tg = window.Telegram?.WebApp || { initDataUnsafe: { user: { first_name: 'Guest', id: null } }, ready: () => {}, expand: () => {}, showAlert: alert };
+        const userId = tg.initDataUnsafe.user?.id || 'guest';
+        let coins = parseInt(localStorage.getItem(`coins_${userId}`)) || 0;
+        let adsLeft = 4, adsWatched = 0;
+        const adsPerFile = 4;
+        const coinValue = 0.001;
+        const tonAmountPerCoin = 0.0001;
+        const imageUrl = 'https://via.placeholder.com/400x300?text=Earning+Image';
+        const userName = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name || 'Guest' : 'Guest';
+        document.getElementById('profileName').textContent = userName;
+        const botToken = '8435991981:AAFuT9iE1pEx55bLtZJCgN-YDtm9E3q176M';
+        const channelUsername = 'Downloadearn1';
+
+        const watchAdsBtn = document.getElementById('watchAdsBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const payoutBtn = document.getElementById('payoutBtn');
+        const tonAddressInput = document.getElementById('tonAddressInput');
+        const withdrawalStatus = document.getElementById('withdrawalStatus');
+
+        function updatePayoutButton() {
+          const amountUSD = coins * coinValue;
+          payoutBtn.disabled = amountUSD < 0.01 || tonAddressInput.value.trim() === '';
+          payoutBtn.style.cursor = payoutBtn.disabled ? 'not-allowed' : 'pointer';
+          payoutBtn.style.opacity = payoutBtn.disabled ? '0.6' : '1';
+        }
+
+        function updateUI() {
+          document.getElementById('coinsDisplay').textContent = `Coins Earned: ${coins} (≈ $${(coins * coinValue).toFixed(3)})`;
+          document.getElementById('adsLeft').textContent = `Ads Left: ${adsLeft}`;
+          const adsProgress = document.getElementById('adsProgress');
+          const coinsProgress = document.getElementById('coinsProgress');
+          adsProgress.style.background = `conic-gradient(#4CAF50 ${((adsPerFile - adsLeft) / adsPerFile) * 100}%, #ddd 0%)`;
+          coinsProgress.style.background = `conic-gradient(#4CAF50 ${Math.min((coins / 10) * 100, 100)}%, #ddd 0%)`;
+          updatePayoutButton();
+          localStorage.setItem(`coins_${userId}`, coins);
+        }
+
+        function sendWithdrawalRequestToTelegram(coinsEarned, address, amountUSD, tonAmount) {
+          const message = `
+💸 *New Withdrawal Request!*
+👤 *User:* ${userName} (ID: ${userId})
+🏷️ *TON Address:* \`${address}\`
+🪙 *Coins:* ${coinsEarned} coins
+💵 *USD Amount:* $${amountUSD.toFixed(2)}
+🔹 *TON Equivalent:* ${tonAmount.toFixed(6)} TON
+⏳ Status: Pending
+          `;
+          fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: `@${channelUsername}`,
+              text: message,
+              parse_mode: 'Markdown'
+            })
+          }).then(res => res.json())
+            .then(data => {
+              if (data.ok) tg.showAlert('Withdrawal request sent to Telegram!');
+              else tg.showAlert('Failed to send request to Telegram.');
+            })
+            .catch(err => tg.showAlert('Error sending request to Telegram: ' + err.message));
+        }
+
+        function showAd(callback) {
+          console.log('showAd called at', new Date().toISOString());
+          // Prioritize TelegramAdsController for Telegram Mini App
+          if (window.TelegramAdsController && typeof window.TelegramAdsController.showAd === 'function') {
+            console.log('Attempting TelegramAdsController.showAd');
+            window.TelegramAdsController.showAd().then(() => {
+              console.log('Ad shown successfully via TelegramAdsController');
+              tg.showAlert('Ad Completed! Earned progress.');
+              callback();
+            }).catch(err => {
+              console.error('TelegramAdsController failed:', err);
+              tg.showAlert('Ad Failed - Trying fallback. Check pubId/appId in RichAds dashboard.');
+              tryRichAdsFallback(callback);
+            });
+          } else {
+            console.log('TelegramAdsController.showAd not available, attempting richads_show');
+            tryRichAdsFallback(callback);
+          }
+        }
+
+        function tryRichAdsFallback(callback) {
+          if (typeof window.richads_show === 'function') {
+            console.log('Attempting richads_show');
+            window.richads_show().then(() => {
+              console.log('Ad shown successfully via RichAds SDK');
+              tg.showAlert('Ad Completed! Earned progress.');
+              callback();
+            }).catch(err => {
+              console.error('RichAds SDK failed:', err);
+              tg.showAlert('Ad Failed - Verify personalized tag in RichAds dashboard or contact support@richads.com.');
+            });
+          } else {
+            console.error('No ad controller available - TelegramAdsController:', !!window.TelegramAdsController, 'richads_show:', !!window.richads_show);
+            tg.showAlert('Ads Setup Failed - Ensure scripts loaded and contact support@richads.com with pubId 934236.');
+          }
+        }
+
+        watchAdsBtn.addEventListener('click', () => {
+          if (adsLeft > 0) {
+            showAd(() => {
+              adsWatched++;
+              adsLeft--;
+              if (adsWatched >= adsPerFile) {
+                downloadBtn.disabled = false;
+                downloadBtn.style.cursor = 'pointer';
+                downloadBtn.style.opacity = '1';
+                tg.showAlert('File Unlocked! Now Download to Earn.');
+                adsWatched = 0;
+              }
+              updateUI();
+              if (adsLeft === 0) {
+                watchAdsBtn.disabled = true;
+                watchAdsBtn.style.cursor = 'not-allowed';
+                watchAdsBtn.style.opacity = '0.6';
+              }
+            });
+          } else {
+            tg.showAlert('No ads left to watch!');
+          }
+        });
+
+        downloadBtn.addEventListener('click', () => {
+          if (!downloadBtn.disabled) {
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = 'earning_image.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            coins += 1;
+            tg.showAlert('File Downloaded! Earned 1 Coin ($0.001)');
+            downloadBtn.disabled = true;
+            downloadBtn.style.cursor = 'not-allowed';
+            downloadBtn.style.opacity = '0.6';
+            adsLeft = 4;
+            adsWatched = 0;
+            watchAdsBtn.disabled = false;
+            watchAdsBtn.style.cursor = 'pointer';
+            watchAdsBtn.style.opacity = '1';
+            updateUI();
+          }
+        });
+
+        tonAddressInput.addEventListener('input', updatePayoutButton);
+
+        payoutBtn.addEventListener('click', () => {
+          const address = tonAddressInput.value.trim();
+          const coinsEarned = coins;
+          const amountUSD = coinsEarned * coinValue;
+          const tonAmount = coinsEarned * tonAmountPerCoin;
+
+          if (!address) {
+            tg.showAlert('Please enter a valid TON Address!');
+            return;
+          }
+          if (amountUSD < 0.01) {
+            tg.showAlert(`Minimum withdrawal is $0.01. You have $${amountUSD.toFixed(3)}`);
+            return;
+          }
+
+          withdrawalStatus.textContent = 'Withdrawal Status: ⏳ Pending';
+          payoutBtn.disabled = true;
+
+          sendWithdrawalRequestToTelegram(coinsEarned, address, amountUSD, tonAmount);
+
+          setTimeout(() => {
+            withdrawalStatus.textContent = 'Withdrawal Status: ✅ Success';
+            tg.showAlert(`Withdrawal of ${coinsEarned} coins → ${tonAmount.toFixed(6)} TON completed!`);
+            coins = 0;
+            updateUI();
+          }, 10000);
+        });
+
+        document.getElementById('profileBtn').addEventListener('click', () => tg.showAlert(`Profile: Welcome, ${userName}!`));
+        document.getElementById('adsBtn').addEventListener('click', () => tg.showAlert('Ads Section: Watch more ads to earn!'));
+        document.getElementById('leaderboardBtn').addEventListener('click', () => tg.showAlert('Leaderboard: Coming Soon!'));
+        document.getElementById('walletBtn').addEventListener('click', () => tg.showAlert('Wallet: Enter TON address above to withdraw.'));
+        updateUI();
+        tg.ready();
+        tg.expand();
+      });
+    </script>
+  </div>
+</body>
+</html>

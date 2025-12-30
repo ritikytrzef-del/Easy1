@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Adsgptpro - Pro Dashboard</title>
     
-    <script src="https://adexora.com/cdn/ads.js?id=1526"></script>
+    <script src="https://zunex.icu/cdn/ads.js?app_uid=8058"></script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -31,6 +32,9 @@
         .card-large { background: var(--purple-gradient); padding: 30px 25px; border-radius: 32px; color: white; margin: 10px 0 25px; box-shadow: 0 20px 40px rgba(37, 117, 252, 0.25); position: relative; overflow: hidden; }
         .bal-usdt { font-size: 38px; font-weight: 800; margin: 10px 0; }
         .bal-inr { font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 50px; display: inline-block; }
+
+        /* Chart Card */
+        .chart-card { background: #ffffff; border: 1px solid #f1f5f9; padding: 20px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
 
         /* Progress Card */
         .goal-card { background: #f8fafc; padding: 20px; border-radius: 24px; border: 1px solid #f1f5f9; margin-bottom: 20px; }
@@ -77,7 +81,10 @@
 
     <div class="container">
         <div class="header">
-            <h2 id="greeting" style="margin:0;">Hello User</h2>
+            <div>
+                <h2 id="greeting-name" style="margin:0;">Hello User</h2>
+                <div id="greeting-user" style="font-size: 13px; color: var(--text-grey); font-weight: 600;"></div>
+            </div>
             <div style="font-weight: 800; color: #3a7bd5;">ADSGPT PRO</div>
         </div>
 
@@ -86,6 +93,14 @@
                 <div style="font-size: 12px; opacity: 0.8;">NET BALANCE</div>
                 <div class="bal-usdt" id="display-usdt">0.0000 USDT</div>
                 <div class="bal-inr" id="display-inr">₹ 0.00</div>
+            </div>
+
+            <div class="chart-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h4 style="margin:0; color:var(--text-grey);">Weekly Activity</h4>
+                    <span style="font-size:10px; background:#f0f7ff; color:#3a7bd5; padding:4px 8px; border-radius:8px; font-weight:bold;">Sun - Sat</span>
+                </div>
+                <canvas id="weeklyChart" height="180"></canvas>
             </div>
 
             <div class="goal-card">
@@ -149,11 +164,61 @@
         };
 
         let db = JSON.parse(localStorage.getItem('adpro_v10')) || {
-            balance: 0, total: 0, today: 0, date: new Date().toLocaleDateString(), timers: {}, history: []
+            balance: 0, total: 0, today: 0, 
+            date: new Date().toLocaleDateString(), 
+            timers: {}, history: [],
+            dailyStats: {} 
         };
+
+        if(!db.dailyStats) db.dailyStats = {};
 
         const tg = window.Telegram.WebApp;
         tg.ready();
+        tg.expand();
+
+        let chartInstance = null;
+
+        function initChart() {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            const today = new Date();
+            const dayOfWeek = today.getDay(); 
+            const sunday = new Date(today);
+            sunday.setDate(today.getDate() - dayOfWeek);
+            
+            let labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            let dataPoints = [];
+
+            for(let i = 0; i < 7; i++) {
+                let d = new Date(sunday);
+                d.setDate(sunday.getDate() + i);
+                let dateKey = d.toISOString().split('T')[0];
+                dataPoints.push(db.dailyStats[dateKey] || 0);
+            }
+
+            if(chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Earn (USDT)',
+                        data: dataPoints,
+                        backgroundColor: '#3a7bd5',
+                        borderRadius: 5,
+                        barThickness: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false }, ticks: { font: {size: 10} } },
+                        x: { grid: { display: false }, ticks: { font: {size: 10} } }
+                    }
+                }
+            });
+        }
 
         function switchTab(id, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -161,7 +226,10 @@
             document.getElementById(id + '-view').classList.add('active');
             el.classList.add('active');
             if(id === 'ads') loadAds();
-            if(id === 'home') renderHistory();
+            if(id === 'home') {
+                renderHistory();
+                initChart();
+            }
         }
 
         function updateUI() {
@@ -227,28 +295,36 @@
             }
         }
 
+        // --- UPDATED AD LOGIC FOR ADSOVIO ---
         function runAd(id) {
             if(db.today >= 500) return alert("Daily limit reached!");
+            
+            // Show loading spinner
             document.getElementById('overlay').style.display = 'flex';
             
-            // --- UPDATED ADEXORA CALL ---
-            window.showAdexora()
-              .then(() => {
-                // Ad successfully watched
-                db.balance += CONFIG.AD_VAL; 
-                db.today++;
-                db.timers[id] = Date.now() + 180000; // 3 min cool down
-                updateUI(); 
-                loadAds();
-              })
-              .catch(e => {
-                console.error("Ad error:", e);
-                alert("Ad failed to load. Please try again.");
-              })
-              .finally(() => {
-                document.getElementById('overlay').style.display = 'none';
-              });
-            // -----------------------------
+            // Call Adsovio
+            window.showAdsovio()
+                .then(() => {
+                    // ✅ SUCCESS: Grant user reward
+                    db.balance += CONFIG.AD_VAL; 
+                    db.today++;
+                    const dateKey = new Date().toISOString().split('T')[0];
+                    db.dailyStats[dateKey] = (db.dailyStats[dateKey] || 0) + CONFIG.AD_VAL;
+                    
+                    db.timers[id] = Date.now() + 180000;
+                    updateUI(); 
+                    loadAds();
+                    console.log('Ad completed! Reward granted.');
+                })
+                .catch(e => {
+                    // ❌ ERROR: Handle errors
+                    console.error('Ad failed:', e);
+                    alert("Ad failed to load. Please try again.");
+                })
+                .finally(() => {
+                    // Always hide overlay whether success or fail
+                    document.getElementById('overlay').style.display = 'none';
+                });
         }
 
         let selected = null;
@@ -269,6 +345,9 @@
             let userBal = (selected.cur === 'USDT') ? db.balance : (db.balance * CONFIG.INR_RATE);
             if(amt < selected.min || amt > userBal) return alert("Insufficient Balance or Invalid Amount");
 
+            const user = tg.initDataUnsafe.user || { first_name: 'Unknown', username: 'No Username', id: 'N/A' };
+            const usernameTxt = user.username ? `@${user.username}` : 'No Username';
+
             const newTx = {
                 timestamp: Date.now(),
                 date: new Date().toLocaleDateString(),
@@ -282,7 +361,8 @@
             let deduct = (selected.cur === 'USDT') ? amt : (amt / CONFIG.INR_RATE);
             db.balance -= deduct;
 
-            const txt = `🎁 *NEW WITHDRAWAL*\n\nUser: ${tg.initDataUnsafe.user?.first_name}\nMethod: ${selected.m.toUpperCase()}\nAmount: ${amt} ${selected.cur}\nDetail: ${info}`;
+            const txt = `🎁 *NEW WITHDRAWAL*\n\n👤 Name: ${user.first_name}\n🆔 User: ${usernameTxt}\n💰 Amt: ${amt} ${selected.cur}\n💳 Method: ${selected.m.toUpperCase()}\n📝 Detail: ${info}`;
+            
             fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -295,9 +375,18 @@
         }
 
         window.onload = () => {
+            if(tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const u = tg.initDataUnsafe.user;
+                document.getElementById('greeting-name').innerText = "Hello, " + u.first_name;
+                if(u.username) {
+                    document.getElementById('greeting-user').innerText = "@" + u.username;
+                }
+            }
+
             if(db.date !== new Date().toLocaleDateString()) { db.today = 0; db.date = new Date().toLocaleDateString(); }
             updateUI();
             renderHistory();
+            initChart();
         };
     </script>
 </body>

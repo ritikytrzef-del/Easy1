@@ -5,14 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Adsgptpro - Powered by Reward Software</title>
     
-    <script src="https://ad.gigapub.tech/script?id=5478"></script>
-    
-    <script src='//libtl.com/sdk.js' data-zone='10540040' data-sdk='show_10540040'></script>
-    
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
-    
     <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
 
+    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
@@ -23,7 +18,6 @@
             --blue-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
             --purple-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             --rich-gradient: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
-            --brand-gradient: linear-gradient(45deg, #3a7bd5, #6a11cb, #00d2ff, #2575fc);
             --text-black: #0f172a;
             --text-grey: #64748b;
         }
@@ -37,38 +31,14 @@
         .bal-usdt { font-size: 38px; font-weight: 800; margin: 10px 0; }
         .bal-inr { font-size: 16px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 50px; display: inline-block; }
 
-        .reward-branding {
-            text-align: center;
-            margin-top: 30px;
-            padding: 15px;
-            border-radius: 20px;
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-        }
-        .branding-text {
-            font-weight: 800;
-            font-size: 16px;
-            background: var(--brand-gradient);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientMove 5s infinite linear;
-        }
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .goal-card { background: #f8fafc; padding: 20px; border-radius: 24px; border: 1px solid #f1f5f9; margin-bottom: 20px; }
         .progress-container { height: 10px; background: #e2e8f0; border-radius: 50px; overflow: hidden; margin-top: 10px; }
         .progress-bar { height: 100%; background: var(--blue-gradient); width: 0%; transition: 1s ease; }
 
         .ads-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .ad-card { background: #ffffff; border: 1px solid #f1f5f9; border-radius: 24px; padding: 20px 15px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .btn-watch { width: 100%; border: none; background: var(--blue-gradient); color: white; padding: 12px; border-radius: 14px; font-weight: 700; cursor: pointer; }
-        .btn-rich { background: var(--rich-gradient); }
-
+        .btn-watch { width: 100%; border: none; background: var(--rich-gradient); color: white; padding: 12px; border-radius: 14px; font-weight: 700; cursor: pointer; }
+        
         .wallet-card { background: #ffffff; border: 2px solid #f1f5f9; border-radius: 20px; padding: 18px; margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .wallet-card.active { border-color: #3a7bd5; background: #f0f7ff; }
 
@@ -84,7 +54,7 @@
 </head>
 <body>
 
-    <div id="overlay"><div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin" style="font-size:40px; color:#3a7bd5;"></i><p>LOADING AD...</p></div></div>
+    <div id="overlay"><div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin" style="font-size:40px; color:#ff5e62;"></i><p>LOADING AD...</p></div></div>
 
     <div class="container">
         <div class="header">
@@ -92,7 +62,7 @@
                 <h2 style="margin:0;">Adsgptpro</h2>
                 <div id="greeting-user" style="font-size: 13px; color: var(--text-grey); font-weight: 600;"></div>
             </div>
-            <div style="font-size: 10px; font-weight: 800; color: #3a7bd5;">VERIFIED BY REWARD</div>
+            <div style="font-size: 10px; font-weight: 800; color: #3a7bd5;">VERIFIED</div>
         </div>
 
         <div id="home-view" class="view active">
@@ -111,24 +81,23 @@
             </div>
             
             <div style="text-align:center; color:gray; font-size:12px; line-height:2;">
-                Today: <span id="today-count">0</span>/100 | Hour: <span id="hour-count">0</span>/20<br>
+                Today: <span id="today-count">0</span>/100<br>
                 Total Ads Watched: <span id="total-ads-count" style="font-weight:bold; color:#3a7bd5;">0</span>
-            </div>
-
-            <div class="reward-branding">
-                <small style="color:#64748b; font-weight:600;">System Security</small><br>
-                Powered by <span class="branding-text">Reward Software</span>
             </div>
         </div>
 
         <div id="ads-view" class="view">
-            <h4 style="margin:0 0 15px 5px; color:var(--text-grey);">Monetized Ads</h4>
+            <h4 style="margin:0 0 15px 5px; color:var(--text-grey);">RichAds Tasks</h4>
             <div class="ads-container" id="slots-container"></div>
         </div>
 
         <div id="wallet-view" class="view">
             <h4 style="margin:0 0 15px 5px; color:var(--text-grey);">Withdraw Methods</h4>
             
+            <div style="background:#fffbeb; color:#b45309; padding:10px; border-radius:12px; margin-bottom:15px; font-size:12px; text-align:center; border:1px solid #fcd34d;">
+                <i class="fa-regular fa-clock"></i> Note: All withdrawals are processed within <b>24 Hours</b>.
+            </div>
+
             <div class="wallet-card" onclick="selectWay('faucetpay', 0.005, 'USDT', 'Enter Faucetpay Email', 100, 0.005)">
                 <div><b>Faucetpay</b><br><small>Limit: Max $0.005 + 100 Ads</small></div>
                 <i class="fa-solid fa-faucet" style="color:#3a7bd5"></i>
@@ -166,7 +135,7 @@
     </div>
 
     <script>
-        // --- RichAds Setup ---
+        // --- RichAds Config ---
         const richadsController = new window.TelegramAdsController();
         richadsController.initialize({
             pubId: "997627",
@@ -174,114 +143,73 @@
             debug: false
         });
 
-        // --- Monetag Setup ---
-        show_10540040({
-            type: 'inApp',
-            inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
-        });
-
         const CONFIG = {
             BOT_TOKEN: '8270496065:AAEJE96nwnqgbjNfLw8BbvaMQsytZedrXaI',
             ADMIN_ID: '6601027952',
-            AD_VAL: 0.0002, // Giga Value
-            RICH_AD_VAL: 0.0002, // RichAds Value
+            AD_VAL: 0.0002, 
             INR_RATE: 88,
-            DAILY_LIMIT: 100,
-            HOURLY_LIMIT: 20
+            DAILY_LIMIT: 100
         };
 
-        let db = JSON.parse(localStorage.getItem('adpro_reward_v4')) || {
-            balance: 0, totalAds: 0, todayAds: 0, hourAds: 0,
-            lastHourTime: Date.now(),
+        let db = JSON.parse(localStorage.getItem('adpro_reward_v5')) || {
+            balance: 0, totalAds: 0, todayAds: 0,
             date: new Date().toLocaleDateString(), 
             history: []
         };
 
         const tg = window.Telegram.WebApp;
         tg.ready();
+        tg.expand();
 
         function updateUI() {
             if(db.date !== new Date().toLocaleDateString()) { db.todayAds = 0; db.date = new Date().toLocaleDateString(); }
-            if(Date.now() - db.lastHourTime > 3600000) { db.hourAds = 0; db.lastHourTime = Date.now(); }
 
             document.getElementById('display-usdt').innerText = db.balance.toFixed(4) + ' USDT';
             document.getElementById('display-inr').innerText = '₹ ' + (db.balance * CONFIG.INR_RATE).toFixed(2);
             document.getElementById('today-count').innerText = db.todayAds;
-            document.getElementById('hour-count').innerText = db.hourAds;
             document.getElementById('total-ads-count').innerText = db.totalAds;
 
             let p = (db.todayAds / CONFIG.DAILY_LIMIT) * 100;
             document.getElementById('goal-bar').style.width = p + '%';
             document.getElementById('goal-percent').innerText = Math.round(p) + '%';
             
-            localStorage.setItem('adpro_reward_v4', JSON.stringify(db));
+            localStorage.setItem('adpro_reward_v5', JSON.stringify(db));
         }
 
-        // --- LOAD ADS FUNCTION MODIFIED ---
         function loadAds() {
             const container = document.getElementById('slots-container');
             container.innerHTML = '';
             
-            // 1. Gigapub Slots (1, 2, 3)
-            // Ye loop 3 baar chalega aur Gigapub function (runGigaAd) ko call karega
-            for(let i=1; i<=3; i++) {
+            // Loop for Ads 1, Ads 2, Ads 3 (All RichAds now)
+            for(let i=1; i<=4; i++) {
                 container.innerHTML += `
                     <div class="ad-card">
-                        <i class="fa-solid fa-video" style="color:#3a7bd5; font-size:20px; margin-bottom:10px;"></i><br>
-                        <b>Gigapub Slot ${i}</b><br><small style="color:green;">+$${CONFIG.AD_VAL}</small><br><br>
-                        <button class="btn-watch" onclick="runGigaAd()">Watch</button>
+                        <i class="fa-solid fa-star" style="color:#ff5e62; font-size:20px; margin-bottom:10px;"></i><br>
+                        <b>RichAds Task ${i}</b><br><small style="color:green;">+$${CONFIG.AD_VAL}</small><br><br>
+                        <button class="btn-watch" onclick="watchAd()">Watch Ad</button>
                     </div>
                 `;
             }
-
-            // 2. Extra RichAds Slot (Slot 4 / Premium)
-            container.innerHTML += `
-                <div class="ad-card" style="border: 2px solid #ff5e62;">
-                    <i class="fa-solid fa-star" style="color:#ff5e62; font-size:20px; margin-bottom:10px;"></i><br>
-                    <b>RichAds Premium</b><br><small style="color:green;">+$${CONFIG.RICH_AD_VAL}</small><br><br>
-                    <button class="btn-watch btn-rich" onclick="runRichAd()">Watch</button>
-                </div>
-            `;
         }
 
-        // --- GIGAPUB LOGIC ---
-        function runGigaAd() {
+        // --- Main Watch Function ---
+        function watchAd() {
             if(db.todayAds >= CONFIG.DAILY_LIMIT) return alert("Daily limit reached!");
-            if(db.hourAds >= CONFIG.HOURLY_LIMIT) return alert("Hourly limit reached!");
-
-            document.getElementById('overlay').style.display = 'flex';
-            
-            // Calls Gigapub script
-            window.showGiga()
-                .then(() => {
-                    db.balance += CONFIG.AD_VAL;
-                    db.todayAds++;
-                    db.hourAds++;
-                    db.totalAds++;
-                    updateUI();
-                })
-                .catch(e => alert("Ad error or closed early."))
-                .finally(() => document.getElementById('overlay').style.display = 'none');
-        }
-
-        // --- RICHADS LOGIC ---
-        function runRichAd() {
-            if(db.todayAds >= CONFIG.DAILY_LIMIT) return alert("Daily limit reached!");
-            if(db.hourAds >= CONFIG.HOURLY_LIMIT) return alert("Hourly limit reached!");
 
             document.getElementById('overlay').style.display = 'flex';
 
             richadsController.triggerInterstitialBanner().then((result) => {
-                console.log('RichAds Success:', result);
-                db.balance += CONFIG.RICH_AD_VAL;
+                // Success
+                db.balance += CONFIG.AD_VAL;
                 db.todayAds++;
-                db.hourAds++;
                 db.totalAds++;
                 updateUI();
-                alert("RichAds Reward Added Successfully!");
-            }).catch((result) => {
-                console.log('RichAds Fail:', result);
-                alert("Ad failed to load or was skipped.");
+                
+                // --- REQUIRED ALERT ---
+                alert("0.0002$ earn");
+
+            }).catch((e) => {
+                alert("Ad failed to load. Please try again.");
             }).finally(() => {
                 document.getElementById('overlay').style.display = 'none';
             });
@@ -307,10 +235,7 @@
             if(!info || !amt || !selected) return alert("Fill all fields");
 
             if(db.totalAds < selected.reqAds) return alert("Ads count too low!");
-
-            if(selected.m === 'faucetpay' && amt > selected.max) {
-                return alert(`Maximum Faucetpay limit is $${selected.max}`);
-            }
+            if(selected.m === 'faucetpay' && amt > selected.max) return alert(`Maximum Faucetpay limit is $${selected.max}`);
 
             let userBal = (selected.cur === 'INR') ? (db.balance * CONFIG.INR_RATE) : db.balance;
             let minLimit = (selected.cur === 'INR') ? (selected.min * CONFIG.INR_RATE) : selected.min;
@@ -321,7 +246,7 @@
             db.balance -= deduct;
 
             const user = tg.initDataUnsafe.user || { first_name: 'User' };
-            const msg = `🔔 *New Payout Request*\n\nUser: ${user.first_name}\nAmount: ${amt} ${selected.cur}\nMethod: ${selected.m.toUpperCase()}\nDetails: ${info}\nSystem: Reward Software`;
+            const msg = `🔔 *New Payout Request*\n\nUser: ${user.first_name}\nAmount: ${amt} ${selected.cur}\nMethod: ${selected.m.toUpperCase()}\nDetails: ${info}\nNote: 24h Payout Time`;
 
             fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
@@ -331,7 +256,9 @@
 
             db.history.push({ date: new Date().toLocaleDateString(), amount: amt, currency: selected.cur, method: selected.m });
             updateUI();
-            alert("Request sent to Reward Software Team!");
+            
+            // --- WITHDRAWAL TIME ALERT ---
+            alert("Withdrawal request submitted successfully! You will receive payment within 24 hours.");
         }
 
         function switchTab(id, el) {
@@ -344,7 +271,7 @@
                 document.getElementById('history-list').innerHTML = db.history.map(h => `
                     <div style="background:#f1f5f9; padding:15px; border-radius:15px; margin-bottom:10px; display:flex; justify-content:space-between;">
                         <div><b>${h.amount} ${h.currency}</b><br><small>${h.method}</small></div>
-                        <span style="font-size:10px; background:#fffbeb; color:#b45309; padding:5px 10px; border-radius:50px;">Pending</span>
+                        <span style="font-size:10px; background:#fffbeb; color:#b45309; padding:5px 10px; border-radius:50px;">Pending (24h)</span>
                     </div>
                 `).join('') || '<p style="text-align:center;">No history found.</p>';
             }

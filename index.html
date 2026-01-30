@@ -18,7 +18,7 @@
         
         :root {
             --blue-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-            --rich-gradient: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+            --task-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
             --text-black: #0f172a;
             --text-grey: #64748b;
         }
@@ -39,8 +39,7 @@
         .ads-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .ad-card { background: #ffffff; border: 1px solid #f1f5f9; border-radius: 24px; padding: 20px 15px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         
-        .btn-watch { width: 100%; border: none; background: var(--blue-gradient); color: white; padding: 12px; border-radius: 14px; font-weight: 700; cursor: pointer; }
-        .btn-rich { background: var(--rich-gradient); }
+        .btn-watch { width: 100%; border: none; background: var(--task-gradient); color: white; padding: 12px; border-radius: 14px; font-weight: 700; cursor: pointer; }
 
         .wallet-card { background: #ffffff; border: 2px solid #f1f5f9; border-radius: 20px; padding: 18px; margin-bottom: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .wallet-card.active { border-color: #3a7bd5; background: #f0f7ff; }
@@ -57,7 +56,7 @@
 </head>
 <body>
 
-    <div id="overlay"><div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin" style="font-size:40px; color:#3a7bd5;"></i><p>LOADING AD...</p></div></div>
+    <div id="overlay"><div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin" style="font-size:40px; color:#3a7bd5;"></i><p>LOADING...</p></div></div>
 
     <div class="container">
         <div class="header">
@@ -65,7 +64,7 @@
                 <h2 style="margin:0;">Adsgptpro</h2>
                 <div id="greeting-user" style="font-size: 13px; color: var(--text-grey); font-weight: 600;"></div>
             </div>
-            <div style="font-size: 10px; font-weight: 800; color: #3a7bd5;">VERIFIED</div>
+            <div style="font-size: 10px; font-weight: 800; color: #3a7bd5;">VERIFIED BY REWARD</div>
         </div>
 
         <div id="home-view" class="view active">
@@ -90,15 +89,15 @@
         </div>
 
         <div id="ads-view" class="view">
-            <h4 style="margin:0 0 15px 5px; color:var(--text-grey);">Task List</h4>
+            <h4 style="margin:0 0 15px 5px; color:var(--text-grey);">Tasks</h4>
             <div class="ads-container" id="slots-container"></div>
         </div>
 
         <div id="wallet-view" class="view">
             <h4 style="margin:0 0 15px 5px; color:var(--text-grey);">Withdraw Methods</h4>
             
-            <div style="background:#fffbeb; color:#b45309; padding:10px; border-radius:12px; margin-bottom:15px; font-size:12px; text-align:center; border:1px solid #fcd34d;">
-                <i class="fa-regular fa-clock"></i> Note: All withdrawals are processed within <b>24 Hours</b>.
+            <div style="background:#fffbeb; color:#b45309; padding:12px; border-radius:15px; margin-bottom:15px; font-size:12px; text-align:center; border:1px solid #fcd34d;">
+                <i class="fa-regular fa-clock"></i> Note: Withdrawals are processed within <b>24 Hours</b>.
             </div>
 
             <div class="wallet-card" onclick="selectWay('faucetpay', 0.005, 'USDT', 'Enter Faucetpay Email', 100, 0.005)">
@@ -138,7 +137,7 @@
     </div>
 
     <script>
-        // --- RichAds Config ---
+        // --- RichAds Setup ---
         const richadsController = new window.TelegramAdsController();
         richadsController.initialize({
             pubId: "997627",
@@ -154,7 +153,7 @@
             DAILY_LIMIT: 100
         };
 
-        let db = JSON.parse(localStorage.getItem('adpro_reward_v6')) || {
+        let db = JSON.parse(localStorage.getItem('adpro_v8')) || {
             balance: 0, totalAds: 0, todayAds: 0,
             date: new Date().toLocaleDateString(), 
             history: []
@@ -166,95 +165,82 @@
 
         function updateUI() {
             if(db.date !== new Date().toLocaleDateString()) { db.todayAds = 0; db.date = new Date().toLocaleDateString(); }
-
             document.getElementById('display-usdt').innerText = db.balance.toFixed(4) + ' USDT';
             document.getElementById('display-inr').innerText = '₹ ' + (db.balance * CONFIG.INR_RATE).toFixed(2);
             document.getElementById('today-count').innerText = db.todayAds;
             document.getElementById('total-ads-count').innerText = db.totalAds;
-
             let p = (db.todayAds / CONFIG.DAILY_LIMIT) * 100;
             document.getElementById('goal-bar').style.width = p + '%';
             document.getElementById('goal-percent').innerText = Math.round(p) + '%';
-            
-            localStorage.setItem('adpro_reward_v6', JSON.stringify(db));
+            localStorage.setItem('adpro_v8', JSON.stringify(db));
         }
 
-        // --- LOAD ADS FUNCTION UPDATED ---
+        // --- Ad Slot Configuration ---
         function loadAds() {
             const container = document.getElementById('slots-container');
             container.innerHTML = '';
             
-            // 1. Ads 1 -> Gigapub (Blue Color)
-            container.innerHTML += `
-                <div class="ad-card">
-                    <i class="fa-solid fa-video" style="color:#3a7bd5; font-size:20px; margin-bottom:10px;"></i><br>
-                    <b>Ads 1 (Giga)</b><br><small style="color:green;">+$${CONFIG.AD_VAL}</small><br><br>
-                    <button class="btn-watch" onclick="runGigaAd()">Watch Giga</button>
-                </div>
-            `;
-
-            // 2. Ads 2, 3, 4 -> RichAds (Red Color)
-            for(let i=2; i<=4; i++) {
+            // Ads 1, 2, 3 -> RichAds
+            for(let i=1; i<=3; i++) {
                 container.innerHTML += `
-                    <div class="ad-card" style="border: 1px solid #ff5e62;">
-                        <i class="fa-solid fa-star" style="color:#ff5e62; font-size:20px; margin-bottom:10px;"></i><br>
-                        <b>Ads ${i} (Rich)</b><br><small style="color:green;">+$${CONFIG.AD_VAL}</small><br><br>
-                        <button class="btn-watch btn-rich" onclick="runRichAd()">Watch Rich</button>
+                    <div class="ad-card">
+                        <i class="fa-solid fa-bolt" style="color:#2575fc; font-size:20px; margin-bottom:10px;"></i><br>
+                        <b>Ads ${i}</b><br><small style="color:green;">+$${CONFIG.AD_VAL}</small><br><br>
+                        <button class="btn-watch" onclick="runRichAd()">Watch</button>
                     </div>
                 `;
             }
+
+            // Ads 4 -> Gigapub
+            container.innerHTML += `
+                <div class="ad-card" style="border: 1px dashed #3a7bd5;">
+                    <i class="fa-solid fa-clapperboard" style="color:#3a7bd5; font-size:20px; margin-bottom:10px;"></i><br>
+                    <b>Ads 4</b><br><small style="color:green;">+$${CONFIG.AD_VAL}</small><br><br>
+                    <button class="btn-watch" style="background:var(--blue-gradient)" onclick="runGigaAd()">Watch</button>
+                </div>
+            `;
         }
 
-        // --- Function for Gigapub (Ads 1) ---
-        function runGigaAd() {
-            if(db.todayAds >= CONFIG.DAILY_LIMIT) return alert("Daily limit reached!");
-            
-            document.getElementById('overlay').style.display = 'flex';
-            
-            // Calls Gigapub script
-            window.showGiga().then(() => {
-                db.balance += CONFIG.AD_VAL;
-                db.todayAds++;
-                db.totalAds++;
-                updateUI();
-                alert("0.0002$ earn");
-            }).catch(e => {
-                alert("Ad error or closed early.");
-            }).finally(() => {
-                document.getElementById('overlay').style.display = 'none';
-            });
-        }
-
-        // --- Function for RichAds (Ads 2, 3, 4) ---
         function runRichAd() {
             if(db.todayAds >= CONFIG.DAILY_LIMIT) return alert("Daily limit reached!");
-
             document.getElementById('overlay').style.display = 'flex';
-
-            richadsController.triggerInterstitialBanner().then((result) => {
-                db.balance += CONFIG.AD_VAL;
-                db.todayAds++;
-                db.totalAds++;
-                updateUI();
-                alert("0.0002$ earn");
-            }).catch((e) => {
-                alert("Ad failed to load. Try again.");
+            richadsController.triggerInterstitialBanner().then(() => {
+                successReward();
+            }).catch(() => {
+                alert("Ad failed or closed.");
             }).finally(() => {
                 document.getElementById('overlay').style.display = 'none';
             });
         }
 
-        let selected = null;
+        function runGigaAd() {
+            if(db.todayAds >= CONFIG.DAILY_LIMIT) return alert("Daily limit reached!");
+            document.getElementById('overlay').style.display = 'flex';
+            window.showGiga().then(() => {
+                successReward();
+            }).catch(() => {
+                alert("Ad error.");
+            }).finally(() => {
+                document.getElementById('overlay').style.display = 'none';
+            });
+        }
+
+        function successReward() {
+            db.balance += CONFIG.AD_VAL;
+            db.todayAds++;
+            db.totalAds++;
+            updateUI();
+            alert("0.0002$ earn");
+        }
+
         function selectWay(m, min, cur, p, reqAds, max) {
             selected = {m, min, cur, reqAds, max};
             document.querySelectorAll('.wallet-card').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
             document.getElementById('withdraw-form').style.display = 'block';
             document.getElementById('p-info').placeholder = p;
-            
             let minDisp = (cur === 'INR') ? (min * CONFIG.INR_RATE).toFixed(2) : min;
             document.getElementById('p-amt').placeholder = `Amount (${cur}) Min ${minDisp}`;
-            
             document.getElementById('req-note').innerText = reqAds > 0 ? `Required: ${reqAds} Ads (Your Total: ${db.totalAds})` : "";
         }
 
@@ -262,20 +248,15 @@
             const info = document.getElementById('p-info').value;
             const amt = parseFloat(document.getElementById('p-amt').value);
             if(!info || !amt || !selected) return alert("Fill all fields");
-
-            if(db.totalAds < selected.reqAds) return alert("Ads count too low!");
-            if(selected.m === 'faucetpay' && amt > selected.max) return alert(`Maximum Faucetpay limit is $${selected.max}`);
-
+            if(db.totalAds < selected.reqAds) return alert("Not enough ads watched!");
+            
             let userBal = (selected.cur === 'INR') ? (db.balance * CONFIG.INR_RATE) : db.balance;
-            let minLimit = (selected.cur === 'INR') ? (selected.min * CONFIG.INR_RATE) : selected.min;
+            if(amt > userBal) return alert("Insufficient balance.");
 
-            if(amt < minLimit || amt > userBal) return alert("Invalid amount or insufficient balance.");
-
-            let deduct = (selected.cur === 'INR') ? (amt / CONFIG.INR_RATE) : amt;
-            db.balance -= deduct;
-
+            db.balance -= (selected.cur === 'INR' ? amt / CONFIG.INR_RATE : amt);
+            
             const user = tg.initDataUnsafe.user || { first_name: 'User' };
-            const msg = `🔔 *New Payout Request*\n\nUser: ${user.first_name}\nAmount: ${amt} ${selected.cur}\nMethod: ${selected.m.toUpperCase()}\nDetails: ${info}\nNote: 24h Payout Time`;
+            const msg = `💰 *Withdrawal Request*\n\nUser: ${user.first_name}\nAmount: ${amt} ${selected.cur}\nMethod: ${selected.m.toUpperCase()}\nDetails: ${info}\nTime: 24h`;
 
             fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
@@ -285,7 +266,7 @@
 
             db.history.push({ date: new Date().toLocaleDateString(), amount: amt, currency: selected.cur, method: selected.m });
             updateUI();
-            alert("Withdrawal request submitted successfully! You will receive payment within 24 hours.");
+            alert("Request sent! Payment will be processed within 24 hours.");
         }
 
         function switchTab(id, el) {
@@ -300,7 +281,7 @@
                         <div><b>${h.amount} ${h.currency}</b><br><small>${h.method}</small></div>
                         <span style="font-size:10px; background:#fffbeb; color:#b45309; padding:5px 10px; border-radius:50px;">Pending (24h)</span>
                     </div>
-                `).join('') || '<p style="text-align:center;">No history found.</p>';
+                `).join('') || '<p style="text-align:center;">No history.</p>';
             }
         }
 
@@ -310,4 +291,5 @@
         };
     </script>
 </body>
-</html>
+    </html>
+                

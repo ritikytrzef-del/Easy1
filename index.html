@@ -19,7 +19,7 @@
         :root {
             --blue-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
             --purple-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            --gold-gradient: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); /* RichAds Style */
+            --gold-gradient: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
             --brand-gradient: linear-gradient(45deg, #3a7bd5, #6a11cb, #00d2ff, #2575fc);
             --text-black: #0f172a;
             --text-grey: #64748b;
@@ -69,7 +69,7 @@
         .ad-card { background: #ffffff; border: 1px solid #f1f5f9; border-radius: 24px; padding: 20px 15px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .btn-watch { width: 100%; border: none; background: var(--blue-gradient); color: white; padding: 12px; border-radius: 14px; font-weight: 700; cursor: pointer; }
 
-        /* RichAds Premium Card */
+        /* Premium Slot Styling (Gold) */
         .premium-slot {
             grid-column: span 2; /* Full Width */
             background: linear-gradient(135deg, #fffbeb 0%, #fff 100%);
@@ -98,7 +98,7 @@
 </head>
 <body>
 
-    <div id="overlay"><div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin" style="font-size:40px; color:#3a7bd5;"></i><p>LOADING AD...</p></div></div>
+    <div id="overlay"><div style="text-align:center;"><i class="fa-solid fa-spinner fa-spin" style="font-size:40px; color:#3a7bd5;"></i><p>LOADING...</p></div></div>
 
     <div class="container">
         <div class="header">
@@ -186,7 +186,7 @@
             BOT_TOKEN: '8270496065:AAEJE96nwnqgbjNfLw8BbvaMQsytZedrXaI',
             ADMIN_ID: '6601027952',
             AD_VAL: 0.0002,
-            RICHADS_VAL: 0.0005, // Premium Rate for RichAds
+            RICHADS_VAL: 0.0002, // Changed Reward to 0.0002
             INR_RATE: 88,
             DAILY_LIMIT: 100,
             HOURLY_LIMIT: 20
@@ -247,13 +247,12 @@
             const container = document.getElementById('slots-container');
             container.innerHTML = '';
             
-            // 1. RichAds Premium Slot
+            // 1. Premium Slot (NO RICHADS TEXT)
             container.innerHTML += `
                 <div class="ad-card premium-slot">
                     <i class="fa-solid fa-crown" style="color:#b45309; font-size:24px; margin-bottom:10px;"></i><br>
-                    <b style="color:#b45309;">RichAds Premium</b><br>
-                    <small style="color:#b45309; font-weight:bold;">High Pay: +$${CONFIG.RICHADS_VAL}</small><br><br>
-                    <button id="ad-button" class="btn-watch btn-premium" onclick="runRichAds()">WATCH PREMIUM VIDEO</button>
+                    <b style="color:#b45309;">Premium Task</b><br> <small style="color:#b45309; font-weight:bold;">Reward: +$${CONFIG.RICHADS_VAL}</small><br><br>
+                    <button id="ad-button" class="btn-watch btn-premium" onclick="runRichAds()">START TASK</button>
                 </div>
             `;
 
@@ -285,18 +284,18 @@
                     db.todayAds++;
                     db.totalAds++;
                     updateUI();
-                    alert("Premium Ad Bonus Added!");
+                    alert("Task Completed! Bonus Added.");
                 })
                 .catch((error) => {
                     console.log("RichAds Failed:", error);
-                    alert("No Premium Ad available right now. Please try other slots.");
+                    alert("Task not available. Try again.");
                 })
                 .finally(() => {
                     document.getElementById('overlay').style.display = 'none';
                 });
             } else {
                 document.getElementById('overlay').style.display = 'none';
-                alert("Ads System Loading... Try again in 2 seconds.");
+                alert("System Loading... Try again in 2 seconds.");
             }
         }
 

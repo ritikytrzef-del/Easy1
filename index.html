@@ -6,7 +6,6 @@
     <title>Adsgptpro - Powered by Reward Software</title>
     
     <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-    
     <script src="https://ad.gigapub.tech/script?id=5478"></script>
     <script src='//libtl.com/sdk.js' data-zone='10540040' data-sdk='show_10540040'></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -186,20 +185,20 @@
             BOT_TOKEN: '8270496065:AAEJE96nwnqgbjNfLw8BbvaMQsytZedrXaI',
             ADMIN_ID: '6601027952',
             AD_VAL: 0.0002,
-            RICHADS_VAL: 0.0002, // Changed Reward to 0.0002
+            RICHADS_VAL: 0.0002,
             INR_RATE: 88,
             DAILY_LIMIT: 100,
             HOURLY_LIMIT: 20
         };
         // ================================================
 
-        // --- 1. Initialize RichAds Controller ---
+        // --- 1. Initialize Ad Controllers ---
         let richadsController;
         try {
             richadsController = new window.TelegramAdsController();
             richadsController.initialize({
-                pubId: "997627", // Aapka Pub ID
-                appId: "5323",   // Aapka App ID
+                pubId: "997627", 
+                appId: "5323",
                 debug: false
             });
             console.log("RichAds Initialized");
@@ -207,7 +206,6 @@
             console.log("RichAds Init Error:", e);
         }
         
-        // Initialize Monetag
         if(typeof show_10540040 === 'function') {
             show_10540040({
                 type: 'inApp',
@@ -227,6 +225,9 @@
         tg.expand();
 
         function updateUI() {
+            // Force balance to be float to avoid errors
+            db.balance = parseFloat(db.balance);
+
             if(db.date !== new Date().toLocaleDateString()) { db.todayAds = 0; db.date = new Date().toLocaleDateString(); }
             if(Date.now() - db.lastHourTime > 3600000) { db.hourAds = 0; db.lastHourTime = Date.now(); }
 
@@ -247,7 +248,6 @@
             const container = document.getElementById('slots-container');
             container.innerHTML = '';
             
-            // 1. Premium Slot (NO RICHADS TEXT)
             container.innerHTML += `
                 <div class="ad-card premium-slot">
                     <i class="fa-solid fa-crown" style="color:#b45309; font-size:24px; margin-bottom:10px;"></i><br>
@@ -256,7 +256,6 @@
                 </div>
             `;
 
-            // 2. Normal Slots
             for(let i=1; i<=4; i++) {
                 container.innerHTML += `
                     <div class="ad-card">
@@ -268,26 +267,21 @@
             }
         }
 
-        // --- 2. Logic for RichAds Interstitial ---
         function runRichAds() {
             if(db.todayAds >= CONFIG.DAILY_LIMIT) return alert("Daily limit reached!");
 
-            // Show simple loading
             document.getElementById('overlay').style.display = 'flex';
 
             if(richadsController) {
                 richadsController.triggerInterstitialVideo()
                 .then((result) => {
-                    console.log("RichAds Success:", result);
-                    // Reward User
-                    db.balance += CONFIG.RICHADS_VAL;
+                    db.balance = parseFloat(db.balance) + CONFIG.RICHADS_VAL;
                     db.todayAds++;
                     db.totalAds++;
                     updateUI();
                     alert("Task Completed! Bonus Added.");
                 })
                 .catch((error) => {
-                    console.log("RichAds Failed:", error);
                     alert("Task not available. Try again.");
                 })
                 .finally(() => {
@@ -299,7 +293,6 @@
             }
         }
 
-        // Logic for Normal Ads (Monetag/Giga)
         function runAd() {
             if(db.todayAds >= CONFIG.DAILY_LIMIT) return alert("Daily limit reached!");
             if(db.hourAds >= CONFIG.HOURLY_LIMIT) return alert("Hourly limit reached!");
@@ -309,7 +302,7 @@
             if(window.showGiga) {
                 window.showGiga()
                 .then(() => {
-                    db.balance += CONFIG.AD_VAL;
+                    db.balance = parseFloat(db.balance) + CONFIG.AD_VAL;
                     db.todayAds++;
                     db.hourAds++;
                     db.totalAds++;
@@ -318,7 +311,6 @@
                 .catch(e => alert("Ad error or closed early."))
                 .finally(() => document.getElementById('overlay').style.display = 'none');
             } else {
-                // Fallback if Giga not loaded
                 setTimeout(() => {
                     document.getElementById('overlay').style.display = 'none';
                     alert("Ad not loaded yet.");
@@ -340,36 +332,54 @@
             document.getElementById('req-note').innerText = reqAds > 0 ? `Required: ${reqAds} Ads (Your Total: ${db.totalAds})` : "";
         }
 
+        // ============ FIXED WITHDRAWAL LOGIC ============
         function submitRequest() {
+            // 1. Basic Checks
+            if(!selected) return alert("Select a withdrawal method!");
+            
             const info = document.getElementById('p-info').value;
+            // Ensure amount is treated as a number
             const amt = parseFloat(document.getElementById('p-amt').value);
-            if(!info || !amt || !selected) return alert("Fill all fields");
 
-            if(db.totalAds < selected.reqAds) return alert("Ads count too low!");
+            if(!info || isNaN(amt) || amt <= 0) return alert("Invalid details or amount.");
+            if(db.totalAds < selected.reqAds) return alert(`Need ${selected.reqAds} ads to withdraw!`);
 
             if(selected.m === 'faucetpay' && amt > selected.max) {
                 return alert(`Maximum Faucetpay limit is $${selected.max}`);
             }
 
-            let userBal = (selected.cur === 'INR') ? (db.balance * CONFIG.INR_RATE) : db.balance;
+            // 2. Calculate Balance in Requested Currency
+            let currentUsdt = parseFloat(db.balance);
+            let availableBal = (selected.cur === 'INR') ? (currentUsdt * CONFIG.INR_RATE) : currentUsdt;
             let minLimit = (selected.cur === 'INR') ? (selected.min * CONFIG.INR_RATE) : selected.min;
 
-            if(amt < minLimit || amt > userBal) return alert("Invalid amount or insufficient balance.");
+            if(amt < minLimit) return alert(`Minimum amount is ${minLimit.toFixed(2)} ${selected.cur}`);
+            if(amt > availableBal) return alert("Insufficient balance!");
 
-            let deduct = (selected.cur === 'INR') ? (amt / CONFIG.INR_RATE) : amt;
-            db.balance -= deduct;
+            // 3. DEDUCTION LOGIC (Convert back to USDT to subtract)
+            let deductAmountUSDT = 0;
+            if(selected.cur === 'INR') {
+                deductAmountUSDT = amt / CONFIG.INR_RATE;
+            } else {
+                deductAmountUSDT = amt;
+            }
 
+            // Subtract from DB
+            db.balance = currentUsdt - deductAmountUSDT;
+            
+            // Prevent negative zero issues
+            if(db.balance < 0) db.balance = 0;
+
+            // 4. SAVE & NOTIFY
             const user = tg.initDataUnsafe.user || { first_name: 'User' };
-            const msg = `🔔 *New Payout Request*\n\nUser: ${user.first_name}\nAmount: ${amt} ${selected.cur}\nMethod: ${selected.m.toUpperCase()}\nDetails: ${info}\nSystem: Reward Software`;
+            const msg = `🔔 *New Payout Request*\n\nUser: ${user.first_name}\nAmount: ${amt} ${selected.cur}\nMethod: ${selected.m.toUpperCase()}\nInfo: ${info}\nDeducted: $${deductAmountUSDT.toFixed(4)}\nSystem: Adsgptpro`;
 
-            // Telegram Notification
             fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ chat_id: CONFIG.ADMIN_ID, text: msg, parse_mode: 'Markdown' })
             });
 
-            // Save History with TIMESTAMP for 24h Auto-Success Calculation
             db.history.push({ 
                 time: Date.now(), 
                 date: new Date().toLocaleDateString(), 
@@ -377,9 +387,18 @@
                 currency: selected.cur, 
                 method: selected.m 
             });
+
+            // 5. UPDATE UI INSTANTLY
             updateUI();
-            alert("Request sent! Status will update automatically in 24 hours.");
+            
+            // Reset Form
+            document.getElementById('p-info').value = "";
+            document.getElementById('p-amt').value = "";
+            document.getElementById('withdraw-form').style.display = 'none';
+
+            alert(`Request Submitted! Balance Deducted.`);
         }
+        // ================================================
 
         function switchTab(id, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -392,18 +411,15 @@
 
         function renderHistory() {
             const list = document.getElementById('history-list');
-            
             if(db.history.length === 0) {
                 list.innerHTML = '<p style="text-align:center; color:gray;">No history found.</p>';
                 return;
             }
 
-            // Reverse to show latest first
             let html = '';
             [...db.history].reverse().forEach(h => {
-                // Check if 24 hours passed
                 let timeDiff = Date.now() - (h.time || 0); 
-                let isSuccess = timeDiff > (24 * 60 * 60 * 1000); // 24 hours in milliseconds
+                let isSuccess = timeDiff > (24 * 60 * 60 * 1000); // 24 hours
 
                 let statusBadge = isSuccess 
                     ? `<span class="badge-success"><i class="fa-solid fa-check"></i> Success</span>` 

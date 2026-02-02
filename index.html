@@ -206,13 +206,14 @@
             console.log("RichAds Init Error:", e);
         }
         
-         // Initialize Monetag
+        // Initialize Monetag
         if(typeof show_10540040 === 'function') {
             show_10540040({
                 type: 'inApp',
                 inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
             });
         }
+
 
         let db = JSON.parse(localStorage.getItem('adpro_reward_v6')) || {
             balance: 0, totalAds: 0, todayAds: 0, hourAds: 0,
@@ -234,12 +235,7 @@
 
             document.getElementById('display-usdt').innerText = db.balance.toFixed(4) + ' USDT';
             document.getElementById('display-inr').innerText = '₹ ' + (db.balance * CONFIG.INR_RATE).toFixed(2);
-            document.getElementById('today-count').innerTif(typeof show_10540040 === 'function') {
-            show_10540040({
-                type: 'inApp',
-                inAppSettings: { frequency: 2, capping: 0.1, interval: 30, timeout: 5, everyPage: false }
-            });
-            }ext = db.todayAds;
+            document.getElementById('today-count').innerText = db.todayAds;
             document.getElementById('hour-count').innerText = db.hourAds;
             document.getElementById('total-ads-count').innerText = db.totalAds;
 
@@ -404,9 +400,7 @@
 
             alert(`Request Submitted! Balance Deducted.`);
         }
-        // ================================================
-
-        function switchTab(id, el) {
+        // ================================================function switchTab(id, el) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id + '-view').classList.add('active');

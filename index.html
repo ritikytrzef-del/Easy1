@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AdsGPT Pro</title>
     <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10540040' data-sdk='show_10540040'></script>
+    <script src='//libtl.com/sdk.js' data-zone='105400' data-sdk='show_105400'></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script type="text/javascript" src="https://cdn.techtg.space/assets/js/tg-ads-co-widget.min.js"></script>
@@ -905,12 +905,12 @@
     let richadsController;
     try {
         richadsController = new window.TelegramAdsController();
-        richadsController.initialize({ pubId:"997627", appId:"5323", debug:false });
+        richadsController.initialize({ pubId:"997627", appId:"532", debug:false });
     } catch(e) { console.log("RichAds Init Error:", e); }
 
     // Monetag — In-App Interstitial (background only, low frequency)
-    if(typeof show_10540040==='function') {
-        show_10540040({
+    if(typeof show_105400==='function') {
+        show_105400({
             type: 'inApp',
             inAppSettings: { frequency: 2, capping: 0.1, interval: 120, timeout: 5, everyPage: false }
         });
